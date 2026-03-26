@@ -8,27 +8,33 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: 📥 检出代码
+      - name: 📥 拉取私库代码
         uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/TheBerryHost-Keep-Private
+          token: ${{ secrets.PRIVATE_REPO_TOKEN }}
 
-      - name: 🛡️ 启动 Gost 代理转发
-        if: env.GOST_PROXY != ''
+      - name: 🛡️ 启动 GOST 代理转发
+        if: ${{ env.GOST_PROXY != '' }}
         env:
           GOST_PROXY: ${{ secrets.GOST_PROXY }}
         run: |
-          wget -q https://github.com/ginuerzh/gost/releases/download/v2.11.5/gost-linux-amd64-2.11.5.gz
-          gunzip gost-linux-amd64-2.11.5.gz
-          chmod +x gost-linux-amd64-2.11.5
-          mv gost-linux-amd64-2.11.5 gost
-          nohup ./gost -L http://:8080 -F ${{ secrets.GOST_PROXY }} > gost.log 2>&1 &
+          VERSION=$(curl -s https://api.github.com/repos/ginuerzh/gost/releases/latest \
+            | grep '"tag_name"' | cut -d'"' -f4 | tr -d 'v')
+          echo "📦 GOST 版本: $VERSION"
+          wget -q "https://github.com/ginuerzh/gost/releases/download/v${VERSION}/gost_${VERSION}_linux_amd64.tar.gz"
+          tar -xzf "gost_${VERSION}_linux_amd64.tar.gz"
+          chmod +x gost
+          nohup ./gost -L http://:8080 -F "$GOST_PROXY" > gost.log 2>&1 &
           sleep 3
-          echo "✅ Gost 已启动，测试连通性..."
-          curl -s -x http://127.0.0.1:8080 https://api.ipify.org
+          echo "✅ GOST 已启动，测试连通性..."
+          curl -s -x http://127.0.0.1:8080 https://api.ipify.org \
+            | sed 's/\([0-9]*\.[0-9]*\.[0-9]*\.\)[0-9]*/\1**/g'
 
       - name: 🎮 执行每日领取
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          SESSION_ID: ${{ secrets.SESSION_ID }}
-          GOST_PROXY: ${{ secrets.GOST_PROXY }}
-          TG_BOT: ${{ secrets.TG_BOT }}
+          SESSION_ID:    ${{ secrets.SESSION_ID }}
+          GOST_PROXY:    ${{ secrets.GOST_PROXY }}
+          TG_BOT:        ${{ secrets.TG_BOT }}
         run: bash berryhost.sh
