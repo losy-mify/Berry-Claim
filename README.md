@@ -4,26 +4,19 @@
 
 ## 使用方法
 
-### 1. Fork 本仓库
+### 1. 设置 GitHub Secrets
 
-点击右上角 **Fork** 按钮。
-
-### 2. 设置 GitHub Secrets
-
-进入你 Fork 后的仓库 → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
+**Settings** → **Secrets and variables** → **Actions** → **New repository secret**
 
 | Secret 名称 | 是否必填 | 说明 | 格式 |
 |-------------|----------|------|------|
 | `DISCORD_TOKEN` | ✅ 必填 | Discord 账号 Token | 打开 Discord 网页版 → F12 → Network → 任意请求 → Headers → `authorization` |
 | `SESSION_ID` | ✅ 必填 | Discord Session ID | F12 → Network → 找一个 `interactions` 请求 → Payload → `session_id` |
+| `PRIVATE_REPO_TOKEN` | ✅ 必填 | GitHub PAT（有私库读取权限） | `github_pat_xxxxxx` |
 | `GOST_PROXY` | ⭕ 可选 | 代理地址，不填则直连 | `socks5://user:pass@host:port` |
 | `TG_BOT` | ⭕ 可选 | Telegram 通知，不填则跳过 | `CHAT_ID,BOT_TOKEN` |
 
-### 3. 启用 Actions
-
-进入你的仓库 → **Actions** → 点击 **Enable** 启用工作流。
-
-### 4. 运行
+### 2. 运行
 
 - **自动运行**：每天北京时间 09:00 自动执行
 - **手动运行**：Actions → TheBerryHost 每日领取 → Run workflow
