@@ -1,12 +1,12 @@
 name: TheBerryHost 每日领取
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 1 * * *'   # 每天 UTC 01:00（北京时间 09:00）
+
 jobs:
   claim:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    
     steps:
       - name: 📥 拉取私库代码
         uses: actions/checkout@v4
